@@ -26,10 +26,10 @@ const connection = require('./connection');
 //    }
 // });
 
-function findEvents (optionsObj){
-  // YOUR WORK HERE
+function findEvents (keyword, callback){
+  // search through events
   client.searchEvents({
-    keywords: optionsObj,
+    keywords: keyword,
   }, function(err, data){
      if(err){
        return console.error(err);
@@ -38,26 +38,18 @@ function findEvents (optionsObj){
      console.log('Received ' + data.search.total_items + ' events');
      console.log('Event listings: ');
 
-     // for ( let i =0 ; i < resultEvents.length; i++){
-     //   console.log("===========================================================")
-       console.log('title: ',resultEvents[0].title);
-     // }
-   inquirer.prompt({
-     type: 'input',
-     name: 'toDatabase',
-     message: 'Do you want to send this event to the database (yes/no)?',
-   }).then((res) => {
-     if(res.toDatabase === 'y' || res.toDatabase === 'Y' || res.toDatabase === 'yes') {
-       var post = {title: resultEvents[0].title};
-       connection.query("INSERT INTO Events SET ?", post, function(error, results, fields) {
-         if (error) throw error;
-       });
-     } else {
-       //if no, go back to step 1 question: what do you want to search
+     console.log('title: ',resultEvents[0].title);
+       var newTitle = resultEvents[0].title;
 
-     }
+    let eventList ={
+      title: newTitle
+    };
+
+      callback(eventList);
    })
-}
+};
+
+
 
 //export a custom function that searches via Eventful API, displays the results AND stores some of the data into MySQL
 module.exports = findEvents;
