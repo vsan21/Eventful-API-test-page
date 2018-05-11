@@ -146,8 +146,10 @@ app.matchUserWithEvent = (continueCallback) => {
   //YOUR WORK HERE
   let userArrayList = [];
   let eventArrayList = [];
-  connection.query ('SELECT * FROM Users', function(err, results, fields) {
+  connection.query('SELECT * FROM Users', function(err, results, fields){
     let userList = JSON.parse(JSON.stringify(results));
+    console.log(userList);
+
     for(let i=0; i<userList.length; i++) {
       userArrayList.push(`${userList[i].id} || ${userList[i].email}`);
     }
@@ -157,13 +159,15 @@ app.matchUserWithEvent = (continueCallback) => {
       message: 'Which of these is your email?',
       choices: userArrayList
     }).then((res) => {
-      let grabUserID = res.uID.split('||');
-      let userID = grabUserID[0];
+      // res.uID // '4 || vivs@gmail.com'
+      let grabUserID = res.uID.split('||');   // ['4', 'vivs@gmail.com']
+      let userID = grabUserID[0];     // '4'
 
       connection.query('SELECT * FROM Events', function(err, results, fields) {
         let eventsList = JSON.parse(JSON.stringify(results));
-        for(let i=0; i<eventsList.length; i++) {
-          eventArrayList.push(`${eventsList[i].id} || ${eventsList[i].title} || ${eventsList[i].time}`);
+
+        for(let i=0; i<eventsList.length; i++){
+          eventArrayList.push(`${eventsList[i].id} || ${eventsList[i].title}`)
         }
         inquirer.prompt({
           type: 'list',
@@ -175,17 +179,18 @@ app.matchUserWithEvent = (continueCallback) => {
           let eventID = grabEventID[0];
 
           let combineUserAndEvent = {user_id: userID, event_id: eventID};
-          connection.query('INSERT INTO users_events SET ?', combineUserAndEvent, function(err, results, fields) {
+          connection.query('INSERT INTO users_events SET ?', combineUserAndEvent, function(err, results, fields){
             if(err) throw err;
             console.log(`You are going to ${grabEventID[1]}!`);
             continueCallback();
           })
+
         })
       })
-    }).catch((err) => {
-      console.log(err);
     })
+
   })
+
 
   // connection.query('SELECT * FROM Users', function(err, results, fields) {
   //   let userList = JSON.parse(JSON.stringify(results));
