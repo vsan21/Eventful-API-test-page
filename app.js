@@ -233,15 +233,11 @@ app.matchUserWithEvent = (continueCallback) => {
   //   })
   // })
 
-  // console.log('Please write code for this function');
-  // //End of your work
-  // continueCallback();
 }
 
 app.seeEventsOfOneUser = (continueCallback) => {
   //YOUR WORK HERE
   let userArrayList = [];
-  let eventArrayList = [];
   connection.query ('SELECT * FROM Users', function(err, results, fields) {
     let userList = JSON.parse(JSON.stringify(results));
     for(let i=0; i<userList.length; i++) {
@@ -256,40 +252,71 @@ app.seeEventsOfOneUser = (continueCallback) => {
       let grabUserID = res.oneUser.split('||');
       let userID = grabUserID[0];
 
-
-
       connection.query('SELECT Users.email, UE.event_id, Events.title FROM Users JOIN users_events AS UE ON Users.id = UE.user_id JOIN Events ON Events.id = UE.event_id WHERE UE.user_id = ?', [userID], function(err, results, fields) {
         if(err) throw err;
-        let result = JSON.parse(JSON.stringify(results));
+        let combineResult = JSON.parse(JSON.stringify(results));
 
         let eventsArray = [];
-
-        for(let i=0; i<result.length; i++){
-          eventsArray.push(result[i].title);
+        for(let i=0; i<combineResult.length; i++){
+          eventsArray.push(`${i+1}) ${combineResult[i].title}`);
         }
-        console.log(eventsArray);
+        let eventsList = eventsArray.join(" ");
 
-        console.log(`${result[0].email} is going to the following event(s): ${eventsArray} ` )
+        console.log(`${combineResult[0].email} is going to the following event(s): ${eventsList}` )
 
-        // continueCallback();
+        continueCallback();
       })
     })
   })
-
-
-
-
-  // console.log('Please write code for this function');
-  // //End of your work
-  // continueCallback();
 }
 
 app.seeUsersOfOneEvent = (continueCallback) => {
   //YOUR WORK HERE
+  let eventArrayList = [];
+  connection.query('SELECT * FROM Events', function(err, results, fields) {
+    let eventsList = JSON.parse(JSON.stringify(results));
+    for(let i=0; i<eventsList.length; i++) {
+      eventArrayList.push(`${eventsList[i].id} || ${eventsList[i].title}`);
+    }
+    inquirer.prompt({
+      type: 'list',
+      name: 'oneEvent',
+      message: 'Select an event to see which user(s) are attending.',
+      choices: eventArrayList
+    }).then((res) => {
+      let grabEventID = res.oneEvent.split('||');
+      let eventID = grabEventID[0];
 
-  console.log('Please write code for this function');
-  //End of your work
-  continueCallback();
+      connection.query('SELECT UE.event_id, Events.title, Users.email FROM Events JOIN users_events AS UE ON Events.id = UE.event_id JOIN Users ON UE.user_id = Users.id WHERE UE.event_id = ?', [eventID], function(err, results, fields){
+        if(results.length === 0) {
+          inquirer.prompt({
+            type: 'confirm',
+            name: 'noUsers',
+            message: 'Sorry no users are attending this event :( Would you like to select another event?',
+            default: false
+          }).then((res) => {
+            if(res.noUsers === true) {
+              app.seeUsersOfOneEvent(continueCallback);
+            } else {
+              continueCallback();
+            }
+          })
+        } else {
+          let combineResult = JSON.parse(JSON.stringify(results));
+
+          let userArray = [];
+          for(let i=0; i<combineResult.length; i++) {
+            userArray.push(`${i+1}) ${combineResult[i].email}`)
+          }
+          let usersList = userArray.join(" ");
+
+          console.log(`Attending the "${combineResult[0].title}" event is/are: ${usersList}`)
+
+          continueCallback();
+        }
+      })
+    })
+  })
 }
 
 module.exports = app;
