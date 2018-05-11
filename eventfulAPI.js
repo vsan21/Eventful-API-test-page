@@ -1,8 +1,7 @@
 const eventfulKey = require("./keys.js").eventful;
 const eventful = require('eventful-node');
 const client = new eventful.Client(eventfulKey);
-const inquirer = require('inquirer');
-const app = require('./app');
+
 const connection = require('./connection');
 
 //sample search, try running it to see it in action
@@ -26,10 +25,12 @@ const connection = require('./connection');
 //    }
 // });
 
-function findEvents (optionsObj){
+function findEvents (keyword, callback) {
   // YOUR WORK HERE
   client.searchEvents({
-    keywords: optionsObj,
+    keywords: keyword,
+    location: 'San Francisco',
+    date: "Next Week"
   }, function(err, data){
      if(err){
        return console.error(err);
@@ -38,25 +39,29 @@ function findEvents (optionsObj){
      console.log('Received ' + data.search.total_items + ' events');
      console.log('Event listings: ');
 
-     // for ( let i =0 ; i < resultEvents.length; i++){
-     //   console.log("===========================================================")
-       console.log('title: ',resultEvents[0].title);
-     // }
-   inquirer.prompt({
-     type: 'input',
-     name: 'toDatabase',
-     message: 'Do you want to send this event to the database (yes/no)?',
-   }).then((res) => {
-     if(res.toDatabase === 'y' || res.toDatabase === 'Y' || res.toDatabase === 'yes') {
-       var post = {title: resultEvents[0].title};
-       connection.query("INSERT INTO Events SET ?", post, function(error, results, fields) {
-         if (error) throw error;
-       });
-     } else {
-       //if no, go back to step 1 question: what do you want to search
+     //id is in an object {'$': {id: ....}, ....}
+     // let newId = resultEvents[0].$.id;
+     let newTitle = resultEvents[0].title;
+     let newTime = resultEvents[0].start_time;
+     let newVenue = resultEvents[0].venue_name;
+     let newAddress = resultEvents[0].venue_address;
 
-     }
-   })
+     let usersEvent = {
+       // event_id: newId,
+       title: newTitle,
+       time: newTime,
+       venue: newVenue,
+       address: newAddress
+     };
+
+     // console.log('event_id: ', newId);
+     console.log('title: ', newTitle);
+     console.log('start_time: ', newTime);
+     console.log('venue_name: ', newVenue);
+     console.log('venue_address: ', newAddress);
+
+     callback(usersEvent);
+  });
 }
 
 //export a custom function that searches via Eventful API, displays the results AND stores some of the data into MySQL

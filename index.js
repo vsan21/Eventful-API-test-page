@@ -2,7 +2,7 @@ const connection = require('./connection');
 const app = require('./app');
 
 const mySqlConnect = () => {
-  connection.connect((err) =>{
+  connection.connect((err) => {
     if (err) throw err;
 
     console.log('Welcome to Eventonica')
