@@ -142,38 +142,42 @@ app.searchEventful = (continueCallback) => {
 
 //app.matchUserWithEvent: the App shows all the Users in database and have the user pick one; App shows all the Events in database, and have the user pick one... After that, maybe a confirmation question? Then you'll make the SQL query and then go back to ask what user wants to do
 
-app.matchUserWithEvent = (continueCallback) => {
-  //YOUR WORK HERE
-  let userArrayList = [];
-  let eventArrayList = [];
-  connection.query('SELECT * FROM Users', function(err, results, fields){
-    let userList = JSON.parse(JSON.stringify(results));
-    console.log(userList);
+parseResults = (inputs, version) => {
+  console.log(inputs);
+  let items = JSON.parse(JSON.stringify(inputs));
+  console.log(items);
 
-    for(let i=0; i<userList.length; i++) {
-      userArrayList.push(`${userList[i].id} || ${userList[i].email}`);
+  let results = []
+  for(var item of items) {
+    let row = `${item.id} || `;
+    if(version === "user") {
+      row += `${item.email}`;
+    } else {
+      row += `${item.title}`;
     }
+    results.push(row);
+  }
+
+  return results;
+}
+
+app.matchUserWithEvent = (continueCallback) => {
+  connection.query('SELECT * FROM Users', function(err, results, fields){
     inquirer.prompt({
       type: 'list',
       name: 'uID',
       message: 'Which of these is your email?',
-      choices: userArrayList
+      choices: parseResults(results, "user")
     }).then((res) => {
-      // res.uID // '4 || vivs@gmail.com'
-      let grabUserID = res.uID.split('||');   // ['4', 'vivs@gmail.com']
-      let userID = grabUserID[0];     // '4'
+      let grabUserID = res.uID.split('||');
+      let userID = grabUserID[0];
 
       connection.query('SELECT * FROM Events', function(err, results, fields) {
-        let eventsList = JSON.parse(JSON.stringify(results));
-
-        for(let i=0; i<eventsList.length; i++){
-          eventArrayList.push(`${eventsList[i].id} || ${eventsList[i].title}`)
-        }
         inquirer.prompt({
           type: 'list',
           name: 'eID',
           message: 'Which event would you like to attend?',
-          choices: eventArrayList
+          choices: parseResults(results, "event")
         }).then((res) => {
           let grabEventID = res.eID.split('||');
           let eventID = grabEventID[0];
@@ -256,8 +260,10 @@ app.seeEventsOfOneUser = (continueCallback) => {
     }).then((res) => {
       let grabUserID = res.oneUser.split('||');
       let userID = grabUserID[0];
+      let useremail = grabUserID[1];
 
       connection.query('SELECT Users.email, UE.event_id, Events.title FROM Users JOIN users_events AS UE ON Users.id = UE.user_id JOIN Events ON Events.id = UE.event_id WHERE UE.user_id = ?', [userID], function(err, results, fields) {
+
         if(err) throw err;
         let combineResult = JSON.parse(JSON.stringify(results));
 
@@ -271,6 +277,7 @@ app.seeEventsOfOneUser = (continueCallback) => {
 
         continueCallback();
       })
+
     })
   })
 }
