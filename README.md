@@ -40,7 +40,7 @@ Eventonica is an interactive event search command-line application. Features inc
 
 2. Go into that project folder
 
-    `cd Eventful-API-test-page`
+    `cd Eventonica`
     
 3. Create an keys file
 
