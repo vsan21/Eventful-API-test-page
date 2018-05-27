@@ -55,7 +55,6 @@ app.startQuestion = (closeConnectionCallback) => {
 }
 
 app.completeSentence = (continueCallback) => {
- //YOUR WORK HERE
  inquirer.prompt([{
    type: 'input',
    name: 'fav_color',
@@ -67,14 +66,9 @@ app.completeSentence = (continueCallback) => {
  }]).then((res) => {
    console.log(`My favorite color is ${res.fav_color} so my dream is to buy a ${res.fav_color} ${res.item}`);
  }).then(continueCallback);
- //End of your work
 }
 
-// let usersname;
-// let usersemail;
-
 app.createNewUser = (continueCallback) => {
-  //YOUR WORK HERE
   // getUsersName().then((res) => {
   //   firstname = res.first_name;
   //   lastname = res.last_name;
@@ -105,11 +99,9 @@ app.createNewUser = (continueCallback) => {
     });
 
   }).then(continueCallback);
-  //End of your work
 }
 
 app.searchEventful = (continueCallback) => {
-  //YOUR WORK HERE
   inquirer.prompt({
     type: 'input',
     name: 'event',
@@ -245,7 +237,6 @@ app.matchUserWithEvent = (continueCallback) => {
 }
 
 app.seeEventsOfOneUser = (continueCallback) => {
-  //YOUR WORK HERE
   let userArrayList = [];
   connection.query ('SELECT * FROM Users', function(err, results, fields) {
     let userList = JSON.parse(JSON.stringify(results));
@@ -283,7 +274,6 @@ app.seeEventsOfOneUser = (continueCallback) => {
 }
 
 app.seeUsersOfOneEvent = (continueCallback) => {
-  //YOUR WORK HERE
   let eventArrayList = [];
   connection.query('SELECT * FROM Events', function(err, results, fields) {
     let eventsList = JSON.parse(JSON.stringify(results));
