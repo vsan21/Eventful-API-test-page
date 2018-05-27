@@ -36,7 +36,7 @@ Eventonica is an interactive event search command-line application. Features inc
 ### Application Setup:
 1. Go onto your desktop and then clone this repo to your local machine
 
-    `cd desktop` and `git clone https://github.com/vsan21/Eventful-API-test-page.git`
+    `cd desktop` and `git clone https://github.com/vsan21/Eventonica.git`
 
 2. Go into that project folder
 
