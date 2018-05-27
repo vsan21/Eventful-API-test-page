@@ -1,5 +1,9 @@
 # Eventonica
 
+**_Tools:_** Node, [Inquirer](https://github.com/SBoudrias/Inquirer.js), [MySQL](https://github.com/mysqljs/mysql), [Eventful API](http://api.eventful.com/), [Eventful Node](https://www.npmjs.com/package/eventful-node).
+
+**_Project instruction outline:_** https://github.com/Techtonica/curriculum/blob/master/projects/project-four-point-five.md
+
 Eventonica is an interactive event search command-line application. Features include: 
   * Creating a new user 
   * Searching for events through Eventful
@@ -7,10 +11,10 @@ Eventonica is an interactive event search command-line application. Features inc
   * Retrieve information on all the events that **_one user_** will be attending 
   * Retrieve information on all the users that will be attending **_one particular event_**
   
-**_Tools:_** Node, [Inquirer](https://github.com/SBoudrias/Inquirer.js), [MySQL](https://github.com/mysqljs/mysql), [Eventful API](http://api.eventful.com/), [Eventful Node](https://www.npmjs.com/package/eventful-node).
+![application image](https://github.com/vsan21/Eventful-API-test-page/blob/master/images/application.png)
 
-**_Project instruction outline:_** https://github.com/Techtonica/curriculum/blob/master/projects/project-four-point-five.md
-
+![search image](https://github.com/vsan21/Eventful-API-test-page/blob/master/images/search.png)
+  
 ---
 ### MySQL Database Setup: 
 1. Install mysql. If you have brew, run `brew install mysql`, then start with `brew services start mysql` (otherwise you can download [MySQL](https://dev.mysql.com/doc/refman/5.6/en/osx-installation-pkg.html)) 
